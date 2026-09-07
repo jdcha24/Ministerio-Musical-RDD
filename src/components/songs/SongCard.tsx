@@ -59,9 +59,11 @@ export const SongCard: React.FC<Props> = ({
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="px-2.5 py-0.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-xs font-bold" title="Tono Original">
-              {song.originalKey}
-            </span>
+            {song.originalKey && (
+              <span className="px-2.5 py-0.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-xs font-bold" title="Tono Original">
+                {song.originalKey}
+              </span>
+            )}
             {song.bpm && (
               <span className="px-2 py-0.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-semibold">
                 {song.bpm} BPM

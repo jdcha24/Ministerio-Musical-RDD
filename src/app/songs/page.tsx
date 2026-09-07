@@ -52,7 +52,9 @@ export default function SongsPage() {
       song.artist.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (song.tags && song.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase())));
 
-    const matchesKey = selectedKeyFilter === 'all' || song.originalKey === selectedKeyFilter;
+    const matchesKey = selectedKeyFilter === 'all' || 
+      song.originalKey === selectedKeyFilter || 
+      (song.attachments && song.attachments.some(a => a.key === selectedKeyFilter));
 
     return matchesSearch && matchesKey;
   });

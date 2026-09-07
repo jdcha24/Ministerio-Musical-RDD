@@ -41,7 +41,7 @@ export const AddSongToSetlistModal: React.FC<Props> = ({
 
   const handleSelectSong = (song: Song) => {
     setSelectedSong(song);
-    setKeyToPlay(song.originalKey);
+    setKeyToPlay(song.originalKey || (song.attachments?.[0]?.key as MusicalKey) || 'G');
   };
 
   const handleAdd = () => {
@@ -116,9 +116,11 @@ export const AddSongToSetlistModal: React.FC<Props> = ({
                     <p className="truncate font-medium">{song.title}</p>
                     <p className="text-[10px] text-slate-400 truncate">{song.artist}</p>
                   </div>
-                  <span className="text-[10px] font-bold bg-slate-800 px-1.5 py-0.5 rounded text-indigo-300">
-                    {song.originalKey}
-                  </span>
+                  {song.originalKey && (
+                    <span className="text-[10px] font-bold bg-slate-800 px-1.5 py-0.5 rounded text-indigo-300">
+                      {song.originalKey}
+                    </span>
+                  )}
                 </div>
               ))}
               {filtered.length === 0 && (
@@ -133,7 +135,9 @@ export const AddSongToSetlistModal: React.FC<Props> = ({
               <div className="space-y-3">
                 <div>
                   <h4 className="font-bold text-sm text-slate-100">{selectedSong.title}</h4>
-                  <p className="text-xs text-slate-400">{selectedSong.artist} • Original: {selectedSong.originalKey}</p>
+                  <p className="text-xs text-slate-400">
+                    {selectedSong.artist} {selectedSong.originalKey ? `• Original: ${selectedSong.originalKey}` : ''}
+                  </p>
                 </div>
 
                 <div>

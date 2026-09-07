@@ -57,7 +57,7 @@ export interface Song {
   id: string;
   title: string;
   artist: string;
-  originalKey: MusicalKey;
+  originalKey?: MusicalKey;
   bpm?: number;
   timeSignature?: TimeSignature;
   youtubeUrl?: string;
