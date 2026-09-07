@@ -75,9 +75,14 @@ export const PdfViewerModal: React.FC<Props> = ({ attachment, songTitle, isOpen,
         {/* PDF Frame */}
         <div className="flex-1 bg-slate-950 p-1 flex flex-col">
           <iframe
-            src={`${attachment.downloadURL}#toolbar=1&navpanes=0`}
+            src={
+              attachment.downloadURL.includes('drive.google.com')
+                ? attachment.downloadURL
+                : `${attachment.downloadURL}#toolbar=1&navpanes=0`
+            }
             title={attachment.label}
             className="w-full flex-1 rounded-xl border border-slate-800/80 bg-white"
+            allow="autoplay"
           />
         </div>
       </div>

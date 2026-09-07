@@ -117,12 +117,54 @@ export const SongsService = {
     return newAttachment;
   },
 
+  async addDriveAttachment(
+    songId: string,
+    key: MusicalKey,
+    label: string,
+    driveUrl: string,
+    userId: string
+  ): Promise<SongAttachment> {
+    const attachmentId = crypto.randomUUID();
+    let finalUrl = driveUrl.trim();
+    
+    // Normalizar enlaces de Google Drive a /preview para iframe
+    const driveMatch = finalUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || finalUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (driveMatch && driveMatch[1]) {
+      finalUrl = `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+    }
+
+    const newAttachment: SongAttachment = {
+      id: attachmentId,
+      key,
+      label: label.trim() || `Cifrado en ${key}`,
+      downloadURL: finalUrl,
+      fileName: `Google Drive (${key})`,
+      sourceType: 'drive',
+      uploadedAt: new Date().toISOString(),
+      uploadedBy: userId,
+    };
+
+    const songRef = doc(db, SONGS_COLLECTION, songId);
+    const songDoc = await getDoc(songRef);
+    if (songDoc.exists()) {
+      const currentAttachments = (songDoc.data().attachments || []) as SongAttachment[];
+      await updateDoc(songRef, {
+        attachments: [...currentAttachments, newAttachment],
+        updatedAt: new Date().toISOString()
+      });
+    }
+
+    return newAttachment;
+  },
+
   async deleteAttachment(songId: string, attachment: SongAttachment): Promise<void> {
-    try {
-      const storageRef = ref(storage, attachment.storagePath);
-      await deleteObject(storageRef);
-    } catch (error) {
-      console.warn('El archivo no existía en Storage o ya fue eliminado');
+    if (attachment.storagePath) {
+      try {
+        const storageRef = ref(storage, attachment.storagePath);
+        await deleteObject(storageRef);
+      } catch (error) {
+        console.warn('El archivo no existía en Storage o ya fue eliminado');
+      }
     }
 
     const songRef = doc(db, SONGS_COLLECTION, songId);

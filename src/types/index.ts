@@ -44,10 +44,11 @@ export interface SongAttachment {
   id: string;
   key: MusicalKey;
   label: string; // Ej: "Cifrado Principal", "Partitura Piano", "Lead Sheet"
-  storagePath: string; // Ej: "songs/song_123/D_chord_chart.pdf"
-  downloadURL: string;
+  storagePath?: string;
+  downloadURL: string; // URL de Drive o archivo
   fileName: string;
-  fileSize: number; // en bytes
+  fileSize?: number;
+  sourceType?: 'drive' | 'upload';
   uploadedAt: string;
   uploadedBy: string; // userId
 }
