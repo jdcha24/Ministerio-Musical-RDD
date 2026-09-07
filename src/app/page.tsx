@@ -58,11 +58,11 @@ export default function HomePage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-16">
+    <div className="min-h-screen bg-slate-950 text-slate-100 pb-24 sm:pb-16">
       <Navbar />
       <NavigationTabs />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-3.5 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Hero de Bienvenida */}
         <div className="relative rounded-3xl bg-gradient-to-r from-indigo-900/40 via-purple-900/20 to-slate-900 border border-indigo-500/20 p-6 sm:p-10 shadow-2xl overflow-hidden">
           <div className="relative z-10 max-w-2xl">

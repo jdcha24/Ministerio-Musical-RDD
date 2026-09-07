@@ -52,11 +52,11 @@ export default function TeamPage() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-16">
+    <div className="min-h-screen bg-slate-950 text-slate-100 pb-24 sm:pb-16">
       <Navbar />
       <NavigationTabs />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <main className="max-w-7xl mx-auto px-3.5 sm:px-6 py-6 sm:py-8">
         {/* Encabezado */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>

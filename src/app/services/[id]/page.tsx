@@ -30,11 +30,11 @@ export default function ServiceDetailPage() {
   }, [serviceId]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-16">
+    <div className="min-h-screen bg-slate-950 text-slate-100 pb-24 sm:pb-16">
       <Navbar />
       <NavigationTabs />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
+      <main className="max-w-7xl mx-auto px-3.5 sm:px-6 pt-4 sm:pt-6">
         <div className="mb-4">
           <Link
             href="/services"
