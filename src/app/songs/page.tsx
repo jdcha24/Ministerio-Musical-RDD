@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Song, SongAttachment, MusicalKey, SongTempoType } from '@/types';
+import { Song, SongAttachment } from '@/types';
 import { Navbar } from '@/components/shared/Navbar';
 import { NavigationTabs } from '@/components/shared/NavigationTabs';
 import { SongCard } from '@/components/songs/SongCard';
@@ -10,7 +10,7 @@ import { PdfUploadModal } from '@/components/songs/PdfUploadModal';
 import { PdfViewerModal } from '@/components/songs/PdfViewerModal';
 import { SongsService } from '@/lib/firebase/songs.service';
 import { useAuth } from '@/context/AuthContext';
-import { Plus, Search, Filter, Music2, Zap, Heart } from 'lucide-react';
+import { Plus, Search, Music2, Zap, Heart } from 'lucide-react';
 
 export default function SongsPage() {
   const { isLeaderOrAdmin } = useAuth();
@@ -18,7 +18,6 @@ export default function SongsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTempoFilter, setSelectedTempoFilter] = useState<'all' | 'fast' | 'slow'>('all');
-  const [selectedKeyFilter, setSelectedKeyFilter] = useState<string>('all');
   
   // Modals state
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -54,13 +53,9 @@ export default function SongsPage() {
     const matchesTempo = 
       selectedTempoFilter === 'all' || 
       song.tempoType === selectedTempoFilter ||
-      (!song.tempoType && selectedTempoFilter === 'slow'); // default a lenta si no tiene
+      (!song.tempoType && selectedTempoFilter === 'slow');
 
-    const matchesKey = selectedKeyFilter === 'all' || 
-      song.originalKey === selectedKeyFilter || 
-      (song.attachments && song.attachments.some(a => a.key === selectedKeyFilter));
-
-    return matchesSearch && matchesTempo && matchesKey;
+    return matchesSearch && matchesTempo;
   });
 
   const fastCount = songs.filter(s => s.tempoType === 'fast').length;
@@ -75,7 +70,7 @@ export default function SongsPage() {
         {/* Encabezado y Acción */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">Catálogo de Alabanza</span>
+            <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">Catálogo</span>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Biblioteca de Canciones</h1>
             <p className="text-sm text-slate-400 mt-1">
               {songs.length} canciones registradas ({fastCount} rápidas • {slowCount} lentas)
@@ -96,7 +91,7 @@ export default function SongsPage() {
           )}
         </div>
 
-        {/* Pestañas de Filtro Rápido (Todas, Rápidas, Lentas) */}
+        {/* Pestañas de Filtro: Todas, Rápidas, Lentas */}
         <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-1">
           <button
             onClick={() => setSelectedTempoFilter('all')}
@@ -117,7 +112,7 @@ export default function SongsPage() {
             }`}
           >
             <Zap className="w-3.5 h-3.5 fill-current" />
-            <span>⚡ Rápidas ({fastCount})</span>
+            <span>Rápidas ({fastCount})</span>
           </button>
           <button
             onClick={() => setSelectedTempoFilter('slow')}
@@ -128,13 +123,13 @@ export default function SongsPage() {
             }`}
           >
             <Heart className="w-3.5 h-3.5 fill-current" />
-            <span>🕊️ Lentas ({slowCount})</span>
+            <span>Lentas ({slowCount})</span>
           </button>
         </div>
 
-        {/* Barra de Búsqueda y Tonalidad */}
-        <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
+        {/* Barra de Búsqueda Limpia */}
+        <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-3.5 mb-6">
+          <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
@@ -143,24 +138,6 @@ export default function SongsPage() {
               placeholder="Buscar por título de la canción o artista..."
               className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
             />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-slate-400" />
-            <select
-              value={selectedKeyFilter}
-              onChange={e => setSelectedKeyFilter(e.target.value)}
-              className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
-            >
-              <option value="all">Todas las tonalidades</option>
-              <option value="C">Tono C</option>
-              <option value="D">Tono D</option>
-              <option value="E">Tono E</option>
-              <option value="F">Tono F</option>
-              <option value="G">Tono G</option>
-              <option value="A">Tono A</option>
-              <option value="B">Tono B</option>
-            </select>
           </div>
         </div>
 

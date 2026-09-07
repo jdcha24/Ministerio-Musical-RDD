@@ -317,11 +317,11 @@ export const ServiceDashboardBoard: React.FC<Props> = ({ initialService }) => {
                       <h4 className="font-bold text-sm text-slate-100 truncate">{item.title}</h4>
                       {item.tempoType === 'fast' ? (
                         <span className="text-[10px] font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
-                          ⚡ Rápida
+                          Rápida
                         </span>
                       ) : (
                         <span className="text-[10px] font-bold text-indigo-300 bg-indigo-500/15 border border-indigo-500/30 px-1.5 py-0.5 rounded shrink-0">
-                          🕊️ Lenta
+                          Lenta
                         </span>
                       )}
                     </div>

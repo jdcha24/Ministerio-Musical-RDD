@@ -119,27 +119,27 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
               <button
                 type="button"
                 onClick={() => setTempoType('fast')}
-                className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                   tempoType === 'fast'
                     ? 'bg-amber-500/20 border-amber-500 text-amber-300 shadow-md shadow-amber-500/10'
                     : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
                 }`}
               >
                 <Zap className="w-4 h-4 text-amber-400 fill-current" />
-                <span>⚡ Rápida (Júbilo)</span>
+                <span>Rápida</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setTempoType('slow')}
-                className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                   tempoType === 'slow'
                     ? 'bg-indigo-500/20 border-indigo-500 text-indigo-300 shadow-md shadow-indigo-500/10'
                     : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
                 }`}
               >
                 <Heart className="w-4 h-4 text-indigo-400 fill-current" />
-                <span>🕊️ Lenta (Adoración)</span>
+                <span>Lenta</span>
               </button>
             </div>
           </div>

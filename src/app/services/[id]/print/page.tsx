@@ -98,7 +98,7 @@ export default function ServicePrintPage() {
                       <div className="flex items-center gap-2">
                         <h3 className="text-base font-bold text-slate-950">{item.title}</h3>
                         <span className="text-[10px] font-bold text-slate-700 uppercase px-1.5 py-0.5 rounded bg-slate-100 border border-slate-300">
-                          {item.tempoType === 'fast' ? '⚡ Rápida' : '🕊️ Lenta'}
+                          {item.tempoType === 'fast' ? 'Rápida' : 'Lenta'}
                         </span>
                       </div>
                       <p className="text-xs text-slate-600">

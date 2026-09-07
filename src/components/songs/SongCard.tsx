@@ -61,11 +61,11 @@ export const SongCard: React.FC<Props> = ({
           <div className="flex items-center gap-1.5 shrink-0">
             {song.tempoType === 'fast' ? (
               <span className="px-2.5 py-0.5 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-bold">
-                ⚡ Rápida
+                Rápida
               </span>
             ) : (
               <span className="px-2.5 py-0.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-xs font-bold">
-                🕊️ Lenta
+                Lenta
               </span>
             )}
             {song.originalKey && (
