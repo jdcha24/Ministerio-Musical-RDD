@@ -1,75 +1,73 @@
-# WorshipFlow - Ministerio Musical RDD 🎶
+# WorshipFlow - Ministerio Musical RDD
 
-Plataforma web integral para la gestión, biblioteca de partituras/cifrados y planificación de servicios dominicales del ministerio de alabanza.
+Plataforma web integral para la gestión, coordinación y planificación del ministerio de alabanza de la iglesia **Ministerio Musical RDD**.
 
----
-
-## 🚀 Tecnologías
-
-* **Framework:** [Next.js 16 (App Router)](https://nextjs.org/)
-* **Lenguaje:** TypeScript (Modo estricto)
-* **Estilos:** Tailwind CSS con componentes estilo shadcn/ui
-* **Backend & Auth:** Firebase Authentication (Google Auth)
-* **Base de Datos:** Cloud Firestore
-* **Almacenamiento:** Firebase Cloud Storage (PDFs de cifrados y partituras)
-* **Íconos:** Lucide React
+Desarrollada con **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS** y la suite de **Firebase (Auth, Firestore y Storage)**.
 
 ---
 
-## 📋 Características Principales
+## Características Principales
 
-1. **Biblioteca Centralizada de Canciones (`/songs`):**
-   * Metadatos completos: Título, Artista, BPM, Compás, Tonalidad original, enlaces a YouTube y Spotify.
-   * Carga y descarga de archivos PDF organizados por tono musical (Firebase Storage).
-   * Visor embebido de partituras/cifrados sin salir de la plataforma.
+* **Planificación de Servicios y Cultos Dominicales**:
+  * Programación de servicios y ensayos con fecha, hora y notas para el equipo.
+  * Estructuración interactiva del setlist de alabanza: orden dinámico, selección del tono específico a tocar ese día y notas operativas.
+  * Convocatoria y alineación de músicos/voces por instrumento con confirmación de asistencia en tiempo real (`Confirmado`, `Pendiente`, `No asiste`).
+  * Vista de alta legibilidad para atril de músico y versión lista para imprimir/exportar a PDF.
 
-2. **Planificador de Servicios & Setlists (`/services`):**
-   * Creación de servicios con fecha, hora, tipo de evento y notas.
-   * Tablero interactivo con reordenamiento de canciones y asignación de tono a ejecutar ese día.
-   * Asignación de músicos por rol (Líder, Batería, Bajo, Guitarras, Voces, etc.) y confirmación de asistencia en tiempo real (`pending`, `confirmed`, `declined`).
+* **Biblioteca Centralizada de Canciones**:
+  * Registro de temas con metadatos: autor, BPM, compás, tono original, enlaces a YouTube/Spotify y etiquetas.
+  * Carga y almacenamiento seguro de archivos PDF (cifrados de acordes, partituras, lead sheets) en Firebase Storage organizados por tonalidad.
+  * Visor de cifrados embebido para visualización directa en cualquier dispositivo.
 
-3. **Vista de Atril / Impresión (`/services/[id]/print`):**
-   * Diseño de alto contraste optimizado para imprimir o colocar en atril de músico en escenario.
-
-4. **Gestión de Equipo y Roles (`/team`):**
-   * Control de acceso basado en roles: `admin`, `leader` y `member`.
-
----
-
-## 🛠️ Configuración Local
-
-1. Clona este repositorio:
-   ```bash
-   git clone https://github.com/jdcha24/Ministerio-Musical-RDD.git
-   cd Ministerio-Musical-RDD
-   ```
-
-2. Instala las dependencias:
-   ```bash
-   npm install
-   ```
-
-3. Configura las variables de entorno en `.env.local` (utiliza `.env.example` como referencia):
-   ```env
-   NEXT_PUBLIC_FIREBASE_API_KEY=tu_api_key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu_proyecto
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu_proyecto.firebasestorage.app
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
-   NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
-   ```
-
-4. Inicia el servidor de desarrollo:
-   ```bash
-   npm run dev
-   ```
-
-5. Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+* **Seguridad y Control de Acceso**:
+  * Autenticación con Google.
+  * Control de roles: `admin` (gestión total y asignación de roles), `leader` (creación de servicios y subida de cifrados) y `member` (consulta de repertorio y confirmación de asistencia).
+  * Reglas de seguridad robustas en `firestore.rules` y `storage.rules`.
 
 ---
 
-## 🔒 Reglas de Seguridad
+## Stack Tecnológico
 
-El repositorio incluye las reglas de seguridad listas para Firebase:
-* `firestore.rules`
-* `storage.rules`
+* **Framework**: [Next.js 16 (App Router)](https://nextjs.org/)
+* **Lenguaje**: TypeScript (Strict Mode)
+* **Estilos**: Tailwind CSS & Lucide Icons
+* **Backend & Base de Datos**: [Cloud Firestore](https://firebase.google.com/docs/firestore)
+* **Autenticación**: [Firebase Authentication](https://firebase.google.com/docs/auth) (Google Auth)
+* **Almacenamiento de Cifrados**: [Firebase Storage](https://firebase.google.com/docs/storage)
+
+---
+
+## Configuración y Puesta en Marcha
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/jdcha24/Ministerio-Musical-RDD.git
+cd Ministerio-Musical-RDD
+```
+
+### 2. Instalar dependencias
+```bash
+npm install
+```
+
+### 3. Variables de Entorno
+Crea un archivo `.env.local` en la raíz del proyecto tomando como base `.env.example`:
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=tu_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=ministerio-musical-rdd.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=ministerio-musical-rdd
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=ministerio-musical-rdd.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
+```
+
+### 4. Iniciar en desarrollo
+```bash
+npm run dev
+```
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+
+### 5. Compilar para Producción
+```bash
+npm run build
+```
