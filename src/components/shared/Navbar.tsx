@@ -40,10 +40,7 @@ export const Navbar: React.FC = () => {
           </div>
           <div>
             <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-              WorshipFlow
-            </span>
-            <span className="hidden sm:inline-block ml-2 text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800/60">
-              RDD
+              Ministerio Musical Río
             </span>
           </div>
         </Link>

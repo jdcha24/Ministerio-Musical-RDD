@@ -68,10 +68,10 @@ export default function HomePage() {
           <div className="relative z-10 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-4">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Ministerio Musical RDD</span>
+              <span>Ministerio Musical Río</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-              {profile ? `¡Hola, ${profile.displayName}!` : 'Bienvenido a WorshipFlow'}
+              {profile ? `¡Hola, ${profile.displayName}!` : 'Bienvenido a Ministerio Musical Río'}
             </h1>
             <p className="text-sm sm:text-base text-slate-300 mt-2">
               Gestión centralizada de partituras, cifrados por tonalidad y planificación semanal del equipo de alabanza.

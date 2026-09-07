@@ -56,7 +56,7 @@ export default function ServicePrintPage() {
           <div className="flex justify-between items-start">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                {SERVICE_TYPE_LABELS[service.serviceType]} • MINISTERIO MUSICAL RDD
+                {SERVICE_TYPE_LABELS[service.serviceType]} • MINISTERIO MUSICAL RÍO
               </span>
               <h1 className="text-2xl sm:text-3xl font-black text-slate-950 mt-1">{service.title}</h1>
             </div>
