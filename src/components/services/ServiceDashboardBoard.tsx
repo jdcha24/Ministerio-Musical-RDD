@@ -313,9 +313,20 @@ export const ServiceDashboardBoard: React.FC<Props> = ({ initialService }) => {
 
                   {/* Detalle Canción */}
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm text-slate-100 truncate">{item.title}</h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-bold text-sm text-slate-100 truncate">{item.title}</h4>
+                      {item.tempoType === 'fast' ? (
+                        <span className="text-[10px] font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 rounded shrink-0">
+                          ⚡ Rápida
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-indigo-300 bg-indigo-500/15 border border-indigo-500/30 px-1.5 py-0.5 rounded shrink-0">
+                          🕊️ Lenta
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-slate-400 truncate">
-                      {item.artist} {item.bpm && `• ${item.bpm} BPM`} {item.timeSignature && `• ${item.timeSignature}`}
+                      {item.artist}
                     </p>
                     {item.notes && (
                       <p className="text-[11px] text-indigo-300 italic mt-0.5 truncate">

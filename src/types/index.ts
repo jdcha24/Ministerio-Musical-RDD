@@ -53,10 +53,13 @@ export interface SongAttachment {
   uploadedBy: string; // userId
 }
 
+export type SongTempoType = 'fast' | 'slow';
+
 export interface Song {
   id: string;
   title: string;
   artist: string;
+  tempoType?: SongTempoType; // 'fast' = Rápida, 'slow' = Lenta
   originalKey?: MusicalKey;
   bpm?: number;
   timeSignature?: TimeSignature;
@@ -91,6 +94,7 @@ export interface SetlistItem {
   order: number;
   title: string;
   artist: string;
+  tempoType?: SongTempoType;
   keyToPlay: MusicalKey;
   bpm?: number;
   timeSignature?: TimeSignature;

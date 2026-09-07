@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Song } from '@/types';
-import { X, Music2 } from 'lucide-react';
+import { Song, SongTempoType } from '@/types';
+import { X, Music2, Zap, Heart } from 'lucide-react';
 import { SongsService } from '@/lib/firebase/songs.service';
 
 interface Props {
@@ -15,9 +15,9 @@ interface Props {
 export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initialSong }) => {
   const [title, setTitle] = useState(initialSong?.title || '');
   const [artist, setArtist] = useState(initialSong?.artist || '');
+  const [tempoType, setTempoType] = useState<SongTempoType>(initialSong?.tempoType || 'slow');
   const [youtubeUrl, setYoutubeUrl] = useState(initialSong?.youtubeUrl || '');
   const [spotifyUrl, setSpotifyUrl] = useState(initialSong?.spotifyUrl || '');
-  const [tagsInput, setTagsInput] = useState(initialSong?.tags?.join(', ') || '');
   const [lyrics, setLyrics] = useState(initialSong?.lyrics || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,29 +34,24 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
     setLoading(true);
     setError(null);
 
-    const tags = tagsInput
-      .split(',')
-      .map(t => t.trim())
-      .filter(t => t.length > 0);
-
     try {
       if (initialSong) {
         await SongsService.update(initialSong.id, {
           title: title.trim(),
           artist: artist.trim(),
+          tempoType,
           youtubeUrl: youtubeUrl.trim() || undefined,
           spotifyUrl: spotifyUrl.trim() || undefined,
           lyrics: lyrics.trim() || undefined,
-          tags,
         });
       } else {
         await SongsService.create({
           title: title.trim(),
           artist: artist.trim(),
+          tempoType,
           youtubeUrl: youtubeUrl.trim() || undefined,
           spotifyUrl: spotifyUrl.trim() || undefined,
           lyrics: lyrics.trim() || undefined,
-          tags,
         });
       }
       onSaved();
@@ -117,6 +112,38 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
             />
           </div>
 
+          {/* Clasificación: Rápida vs Lenta */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Tipo de Canción</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setTempoType('fast')}
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                  tempoType === 'fast'
+                    ? 'bg-amber-500/20 border-amber-500 text-amber-300 shadow-md shadow-amber-500/10'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`}
+              >
+                <Zap className="w-4 h-4 text-amber-400 fill-current" />
+                <span>⚡ Rápida (Júbilo)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTempoType('slow')}
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                  tempoType === 'slow'
+                    ? 'bg-indigo-500/20 border-indigo-500 text-indigo-300 shadow-md shadow-indigo-500/10'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`}
+              >
+                <Heart className="w-4 h-4 text-indigo-400 fill-current" />
+                <span>🕊️ Lenta (Adoración)</span>
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">Enlace YouTube (Opcional)</label>
@@ -138,17 +165,6 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
               />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Etiquetas (separadas por comas)</label>
-            <input
-              type="text"
-              value={tagsInput}
-              onChange={e => setTagsInput(e.target.value)}
-              placeholder="Adoración, Gracia, Pascua, Gratitud"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
-            />
           </div>
 
           <div>

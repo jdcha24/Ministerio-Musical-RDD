@@ -56,9 +56,8 @@ export const AddSongToSetlistModal: React.FC<Props> = ({
       order: currentSetlistCount + 1,
       title: selectedSong.title,
       artist: selectedSong.artist,
+      tempoType: selectedSong.tempoType || 'slow',
       keyToPlay,
-      bpm: selectedSong.bpm,
-      timeSignature: selectedSong.timeSignature,
       notes: notes.trim() || undefined,
       attachmentUrlForKey: matchingAttachment ? matchingAttachment.downloadURL : undefined,
     };
