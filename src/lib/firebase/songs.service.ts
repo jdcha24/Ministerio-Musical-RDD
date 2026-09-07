@@ -117,6 +117,55 @@ export const SongsService = {
     return newAttachment;
   },
 
+  async uploadFileToDrive(
+    songId: string,
+    file: File,
+    key: MusicalKey,
+    label: string,
+    userId: string
+  ): Promise<SongAttachment> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('songId', songId);
+    formData.append('key', key);
+    formData.append('label', label);
+    formData.append('userId', userId);
+
+    const res = await fetch('/api/drive/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Error al subir archivo a Google Drive');
+    }
+
+    const newAttachment: SongAttachment = {
+      id: crypto.randomUUID(),
+      key,
+      label: label.trim() || `Cifrado en ${key}`,
+      downloadURL: data.previewUrl,
+      fileName: data.fileName,
+      fileSize: data.fileSize,
+      sourceType: 'drive',
+      uploadedAt: new Date().toISOString(),
+      uploadedBy: userId,
+    };
+
+    const songRef = doc(db, SONGS_COLLECTION, songId);
+    const songDoc = await getDoc(songRef);
+    if (songDoc.exists()) {
+      const currentAttachments = (songDoc.data().attachments || []) as SongAttachment[];
+      await updateDoc(songRef, {
+        attachments: [...currentAttachments, newAttachment],
+        updatedAt: new Date().toISOString()
+      });
+    }
+
+    return newAttachment;
+  },
+
   async addDriveAttachment(
     songId: string,
     key: MusicalKey,
