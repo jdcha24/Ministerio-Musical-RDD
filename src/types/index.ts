@@ -100,6 +100,8 @@ export interface SetlistItem {
   timeSignature?: TimeSignature;
   notes?: string;
   attachmentUrlForKey?: string;
+  youtubeUrl?: string;
+  spotifyUrl?: string;
 }
 
 export type ServiceType = 'sunday_morning' | 'sunday_evening' | 'midweek' | 'special_event' | 'rehearsal';

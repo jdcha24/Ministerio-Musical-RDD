@@ -28,13 +28,15 @@ import {
   ArrowDown, 
   Pencil,
   Sparkles,
-  Info
+  Info,
+  Share2
 } from 'lucide-react';
 import { ServicePlanService } from '@/lib/firebase/services.service';
 import { useAuth } from '@/context/AuthContext';
 import { AddSongToSetlistModal } from './AddSongToSetlistModal';
 import { AssignMusicianModal } from './AssignMusicianModal';
 import { ServiceFormModal } from './ServiceFormModal';
+import { ShareServiceModal } from './ShareServiceModal';
 import { PdfViewerModal } from '@/components/songs/PdfViewerModal';
 import { formatDate } from '@/lib/utils';
 
@@ -58,6 +60,8 @@ export const ServiceDashboardBoard: React.FC<Props> = ({ initialService }) => {
   const [isAddSongOpen, setIsAddSongOpen] = useState(false);
   const [isAssignMemberOpen, setIsAssignMemberOpen] = useState(false);
   const [isEditServiceOpen, setIsEditServiceOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareTab, setShareTab] = useState<'team' | 'setlist'>('team');
   const [viewingAttachment, setViewingAttachment] = useState<{ att: SongAttachment; title: string } | null>(null);
 
   // Reordenar canciones
@@ -191,26 +195,51 @@ export const ServiceDashboardBoard: React.FC<Props> = ({ initialService }) => {
           </div>
 
           {/* Acciones de Cabecera */}
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
             {saving && (
               <span className="text-xs text-indigo-400 animate-pulse font-medium mr-2">Sincronizando...</span>
             )}
 
+            {/* Botones de Machotes WhatsApp */}
+            <button
+              onClick={() => {
+                setShareTab('team');
+                setIsShareModalOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 font-semibold text-xs transition-colors cursor-pointer"
+              title="Generar machote de convocatoria del equipo de músicos"
+            >
+              <Users className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Machote Equipo</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setShareTab('setlist');
+                setIsShareModalOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-semibold text-xs transition-colors cursor-pointer"
+              title="Generar machote con lista de canciones y links"
+            >
+              <Share2 className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Machote Setlist</span>
+            </button>
+
             <Link
               href={`/services/${service.id}/print`}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition-colors"
             >
-              <Printer className="w-4 h-4" />
-              <span>Vista Imprimir / Atril</span>
+              <Printer className="w-3.5 h-3.5" />
+              <span>Vista Atril</span>
             </Link>
 
             {isLeaderOrAdmin && (
               <button
                 onClick={() => setIsEditServiceOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5" />
-                <span>Editar Datos</span>
+                <span>Editar</span>
               </button>
             )}
           </div>
@@ -267,14 +296,27 @@ export const ServiceDashboardBoard: React.FC<Props> = ({ initialService }) => {
                 Setlist del Día ({service.setlist?.length || 0})
               </h2>
             </div>
-            {isLeaderOrAdmin && (
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => setIsAddSongOpen(true)}
-                className="inline-flex items-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl transition-all shadow-md shadow-indigo-600/20 active:scale-95"
+                onClick={() => {
+                  setShareTab('setlist');
+                  setIsShareModalOpen(true);
+                }}
+                className="inline-flex items-center gap-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 px-2.5 py-1.5 rounded-lg hover:bg-indigo-600/10 transition-colors"
+                title="Generar machote de canciones"
               >
-                <Plus className="w-4 h-4" /> Añadir Canción
+                <Share2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Compartir Setlist</span>
               </button>
-            )}
+              {isLeaderOrAdmin && (
+                <button
+                  onClick={() => setIsAddSongOpen(true)}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl transition-all shadow-md shadow-indigo-600/20 active:scale-95"
+                >
+                  <Plus className="w-4 h-4" /> Añadir Canción
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="space-y-3">
@@ -405,14 +447,27 @@ export const ServiceDashboardBoard: React.FC<Props> = ({ initialService }) => {
                 Equipo Asignado ({service.team?.length || 0})
               </h2>
             </div>
-            {isLeaderOrAdmin && (
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => setIsAssignMemberOpen(true)}
-                className="inline-flex items-center gap-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-95"
+                onClick={() => {
+                  setShareTab('team');
+                  setIsShareModalOpen(true);
+                }}
+                className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-emerald-300 px-2.5 py-1.5 rounded-lg hover:bg-emerald-600/10 transition-colors"
+                title="Generar machote de equipo"
               >
-                <Plus className="w-4 h-4" /> Asignar Músico
+                <Share2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Compartir Equipo</span>
               </button>
-            )}
+              {isLeaderOrAdmin && (
+                <button
+                  onClick={() => setIsAssignMemberOpen(true)}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-95"
+                >
+                  <Plus className="w-4 h-4" /> Asignar
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
@@ -521,6 +576,13 @@ export const ServiceDashboardBoard: React.FC<Props> = ({ initialService }) => {
             if (updated) setService(updated);
           });
         }}
+      />
+
+      <ShareServiceModal
+        isOpen={isShareModalOpen}
+        service={service}
+        initialTab={shareTab}
+        onClose={() => setIsShareModalOpen(false)}
       />
 
       <PdfViewerModal

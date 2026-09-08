@@ -60,6 +60,8 @@ export const AddSongToSetlistModal: React.FC<Props> = ({
       keyToPlay,
       notes: notes.trim() || undefined,
       attachmentUrlForKey: matchingAttachment ? matchingAttachment.downloadURL : undefined,
+      youtubeUrl: selectedSong.youtubeUrl || undefined,
+      spotifyUrl: selectedSong.spotifyUrl || undefined,
     };
 
     onAddSong(newItem);

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Song, SongTempoType } from '@/types';
 import { X, Music2, Zap, Heart } from 'lucide-react';
 import { SongsService } from '@/lib/firebase/songs.service';
@@ -13,16 +13,46 @@ interface Props {
 }
 
 export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initialSong }) => {
-  const [title, setTitle] = useState(initialSong?.title || '');
-  const [artist, setArtist] = useState(initialSong?.artist || '');
-  const [tempoType, setTempoType] = useState<SongTempoType>(initialSong?.tempoType || 'slow');
-  const [youtubeUrl, setYoutubeUrl] = useState(initialSong?.youtubeUrl || '');
-  const [spotifyUrl, setSpotifyUrl] = useState(initialSong?.spotifyUrl || '');
-  const [lyrics, setLyrics] = useState(initialSong?.lyrics || '');
+  const [title, setTitle] = useState('');
+  const [artist, setArtist] = useState('');
+  const [tempoType, setTempoType] = useState<SongTempoType>('slow');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [spotifyUrl, setSpotifyUrl] = useState('');
+  const [lyrics, setLyrics] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (isOpen) {
+      if (initialSong) {
+        setTitle(initialSong.title || '');
+        setArtist(initialSong.artist || '');
+        setTempoType(initialSong.tempoType || 'slow');
+        setYoutubeUrl(initialSong.youtubeUrl || '');
+        setSpotifyUrl(initialSong.spotifyUrl || '');
+        setLyrics(initialSong.lyrics || '');
+      } else {
+        setTitle('');
+        setArtist('');
+        setTempoType('slow');
+        setYoutubeUrl('');
+        setSpotifyUrl('');
+        setLyrics('');
+      }
+      setError(null);
+    }
+  }, [isOpen, initialSong]);
+
   if (!isOpen) return null;
+
+  const normalizeUrl = (url: string) => {
+    const trimmed = url.trim();
+    if (!trimmed) return undefined;
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+    return `https://${trimmed}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,25 +65,29 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
     setError(null);
 
     try {
+      const cleanData = {
+        title: title.trim(),
+        artist: artist.trim(),
+        tempoType,
+        youtubeUrl: normalizeUrl(youtubeUrl),
+        spotifyUrl: normalizeUrl(spotifyUrl),
+        lyrics: lyrics.trim() || undefined,
+      };
+
       if (initialSong) {
-        await SongsService.update(initialSong.id, {
-          title: title.trim(),
-          artist: artist.trim(),
-          tempoType,
-          youtubeUrl: youtubeUrl.trim() || undefined,
-          spotifyUrl: spotifyUrl.trim() || undefined,
-          lyrics: lyrics.trim() || undefined,
-        });
+        await SongsService.update(initialSong.id, cleanData);
       } else {
-        await SongsService.create({
-          title: title.trim(),
-          artist: artist.trim(),
-          tempoType,
-          youtubeUrl: youtubeUrl.trim() || undefined,
-          spotifyUrl: spotifyUrl.trim() || undefined,
-          lyrics: lyrics.trim() || undefined,
-        });
+        await SongsService.create(cleanData);
       }
+      
+      // Limpiar formulario tras guardar con éxito
+      setTitle('');
+      setArtist('');
+      setTempoType('slow');
+      setYoutubeUrl('');
+      setSpotifyUrl('');
+      setLyrics('');
+      
       onSaved();
       onClose();
     } catch (err: any) {
@@ -76,7 +110,11 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
               {initialSong ? 'Editar Canción' : 'Registrar Canción'}
             </h3>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-200 p-1">
+          <button 
+            type="button"
+            onClick={onClose} 
+            className="text-slate-400 hover:text-slate-200 p-1 rounded-lg hover:bg-slate-800 transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -87,7 +125,7 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4" noValidate={false}>
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1.5">Título de la Canción *</label>
             <input
@@ -148,7 +186,7 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">Enlace YouTube (Opcional)</label>
               <input
-                type="url"
+                type="text"
                 value={youtubeUrl}
                 onChange={e => setYoutubeUrl(e.target.value)}
                 placeholder="https://youtube.com/watch?v=..."
@@ -158,7 +196,7 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">Enlace Spotify (Opcional)</label>
               <input
-                type="url"
+                type="text"
                 value={spotifyUrl}
                 onChange={e => setSpotifyUrl(e.target.value)}
                 placeholder="https://open.spotify.com/track/..."
@@ -182,14 +220,14 @@ export const SongFormModal: React.FC<Props> = ({ isOpen, onClose, onSaved, initi
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium text-slate-300 hover:bg-slate-800 rounded-xl transition-colors"
+              className="px-4 py-2 text-xs font-medium text-slate-300 hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 rounded-xl transition-all shadow-md shadow-indigo-600/20"
+              className="px-4 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 rounded-xl transition-all shadow-md shadow-indigo-600/20 cursor-pointer"
             >
               {loading ? 'Guardando...' : (initialSong ? 'Actualizar' : 'Guardar Canción')}
             </button>

@@ -5,12 +5,13 @@ import { Song, SongAttachment } from '@/types';
 import { Navbar } from '@/components/shared/Navbar';
 import { NavigationTabs } from '@/components/shared/NavigationTabs';
 import { SongCard } from '@/components/songs/SongCard';
+import { SongListItem } from '@/components/songs/SongListItem';
 import { SongFormModal } from '@/components/songs/SongFormModal';
 import { PdfUploadModal } from '@/components/songs/PdfUploadModal';
 import { PdfViewerModal } from '@/components/songs/PdfViewerModal';
 import { SongsService } from '@/lib/firebase/songs.service';
 import { useAuth } from '@/context/AuthContext';
-import { Plus, Search, Music2, Zap, Heart } from 'lucide-react';
+import { Plus, Search, Music2, Zap, Heart, LayoutGrid, List } from 'lucide-react';
 
 export default function SongsPage() {
   const { isLeaderOrAdmin } = useAuth();
@@ -18,6 +19,19 @@ export default function SongsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTempoFilter, setSelectedTempoFilter] = useState<'all' | 'fast' | 'slow'>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('songs_view_mode') as 'grid' | 'list' | null;
+    if (saved === 'grid' || saved === 'list') {
+      setViewMode(saved);
+    }
+  }, []);
+
+  const handleToggleViewMode = (mode: 'grid' | 'list') => {
+    setViewMode(mode);
+    localStorage.setItem('songs_view_mode', mode);
+  };
   
   // Modals state
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -91,40 +105,70 @@ export default function SongsPage() {
           )}
         </div>
 
-        {/* Pestañas de Filtro: Todas, Rápidas, Lentas */}
-        <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-1">
-          <button
-            onClick={() => setSelectedTempoFilter('all')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              selectedTempoFilter === 'all'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Todas ({songs.length})
-          </button>
-          <button
-            onClick={() => setSelectedTempoFilter('fast')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              selectedTempoFilter === 'fast'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                : 'bg-slate-900 border border-slate-800 text-amber-400/80 hover:text-amber-300'
-            }`}
-          >
-            <Zap className="w-3.5 h-3.5 fill-current" />
-            <span>Rápidas ({fastCount})</span>
-          </button>
-          <button
-            onClick={() => setSelectedTempoFilter('slow')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              selectedTempoFilter === 'slow'
-                ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20'
-                : 'bg-slate-900 border border-slate-800 text-indigo-400/80 hover:text-indigo-300'
-            }`}
-          >
-            <Heart className="w-3.5 h-3.5 fill-current" />
-            <span>Lentas ({slowCount})</span>
-          </button>
+        {/* Pestañas de Filtro y Selector de Vista */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+            <button
+              onClick={() => setSelectedTempoFilter('all')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                selectedTempoFilter === 'all'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
+                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Todas ({songs.length})
+            </button>
+            <button
+              onClick={() => setSelectedTempoFilter('fast')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                selectedTempoFilter === 'fast'
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                  : 'bg-slate-900 border border-slate-800 text-amber-400/80 hover:text-amber-300'
+              }`}
+            >
+              <Zap className="w-3.5 h-3.5 fill-current" />
+              <span>Rápidas ({fastCount})</span>
+            </button>
+            <button
+              onClick={() => setSelectedTempoFilter('slow')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                selectedTempoFilter === 'slow'
+                  ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20'
+                  : 'bg-slate-900 border border-slate-800 text-indigo-400/80 hover:text-indigo-300'
+              }`}
+            >
+              <Heart className="w-3.5 h-3.5 fill-current" />
+              <span>Lentas ({slowCount})</span>
+            </button>
+          </div>
+
+          {/* Toggle Modo Vista: Tarjetas / Lista */}
+          <div className="flex items-center self-end sm:self-auto bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
+            <button
+              onClick={() => handleToggleViewMode('grid')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Vista en Tarjetas"
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Tarjetas</span>
+            </button>
+            <button
+              onClick={() => handleToggleViewMode('list')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Vista en Lista Compacta"
+            >
+              <List className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Lista</span>
+            </button>
+          </div>
         </div>
 
         {/* Barra de Búsqueda Limpia */}
@@ -141,30 +185,57 @@ export default function SongsPage() {
           </div>
         </div>
 
-        {/* Grid de Canciones */}
+        {/* Contenido: Grid o Lista Compacta */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="h-48 rounded-2xl bg-slate-900/60 border border-slate-800 animate-pulse" />
-            ))}
-          </div>
+          viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="h-48 rounded-2xl bg-slate-900/60 border border-slate-800 animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="h-14 rounded-xl bg-slate-900/60 border border-slate-800 animate-pulse" />
+              ))}
+            </div>
+          )
         ) : filteredSongs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredSongs.map(song => (
-              <SongCard
-                key={song.id}
-                song={song}
-                isLeader={isLeaderOrAdmin}
-                onEdit={song => {
-                  setEditingSong(song);
-                  setIsFormOpen(true);
-                }}
-                onAddPdf={song => setUploadPdfSong(song)}
-                onViewPdf={(att, title) => setViewingAttachment({ att, title })}
-                onDeleted={loadSongs}
-              />
-            ))}
-          </div>
+          viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filteredSongs.map(song => (
+                <SongCard
+                  key={song.id}
+                  song={song}
+                  isLeader={isLeaderOrAdmin}
+                  onEdit={song => {
+                    setEditingSong(song);
+                    setIsFormOpen(true);
+                  }}
+                  onAddPdf={song => setUploadPdfSong(song)}
+                  onViewPdf={(att, title) => setViewingAttachment({ att, title })}
+                  onDeleted={loadSongs}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {filteredSongs.map(song => (
+                <SongListItem
+                  key={song.id}
+                  song={song}
+                  isLeader={isLeaderOrAdmin}
+                  onEdit={song => {
+                    setEditingSong(song);
+                    setIsFormOpen(true);
+                  }}
+                  onAddPdf={song => setUploadPdfSong(song)}
+                  onViewPdf={(att, title) => setViewingAttachment({ att, title })}
+                  onDeleted={loadSongs}
+                />
+              ))}
+            </div>
+          )
         ) : (
           <div className="text-center py-16 bg-slate-900/40 border border-slate-800/60 rounded-3xl p-8">
             <div className="w-12 h-12 rounded-2xl bg-indigo-600/10 text-indigo-400 flex items-center justify-center mx-auto mb-3">
