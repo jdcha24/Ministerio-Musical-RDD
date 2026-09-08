@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Song, SongAttachment, MusicalKey } from '@/types';
+import { sanitizeForFirestore } from '@/lib/utils';
 
 const SONGS_COLLECTION = 'songs';
 
@@ -40,21 +41,23 @@ export const SongsService = {
 
   async create(songData: Omit<Song, 'id' | 'attachments' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const now = new Date().toISOString();
-    const docRef = await addDoc(collection(db, SONGS_COLLECTION), {
+    const cleanData = sanitizeForFirestore({
       ...songData,
       attachments: [],
       createdAt: now,
       updatedAt: now,
     });
+    const docRef = await addDoc(collection(db, SONGS_COLLECTION), cleanData);
     return docRef.id;
   },
 
   async update(id: string, songData: Partial<Song>): Promise<void> {
     const docRef = doc(db, SONGS_COLLECTION, id);
-    await updateDoc(docRef, {
+    const cleanData = sanitizeForFirestore({
       ...songData,
       updatedAt: new Date().toISOString(),
     });
+    await updateDoc(docRef, cleanData);
   },
 
   async delete(id: string): Promise<void> {

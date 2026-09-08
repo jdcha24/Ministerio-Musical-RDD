@@ -12,6 +12,7 @@ import {
   onSnapshot
 } from 'firebase/firestore';
 import { ServicePlan, SetlistItem, ServiceMemberAssignment, MemberConfirmationStatus } from '@/types';
+import { sanitizeForFirestore } from '@/lib/utils';
 
 const SERVICES_COLLECTION = 'services';
 
@@ -50,20 +51,22 @@ export const ServicePlanService = {
 
   async create(serviceData: Omit<ServicePlan, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const now = new Date().toISOString();
-    const docRef = await addDoc(collection(db, SERVICES_COLLECTION), {
+    const cleanData = sanitizeForFirestore({
       ...serviceData,
       createdAt: now,
       updatedAt: now,
     });
+    const docRef = await addDoc(collection(db, SERVICES_COLLECTION), cleanData);
     return docRef.id;
   },
 
   async update(id: string, serviceData: Partial<ServicePlan>): Promise<void> {
     const docRef = doc(db, SERVICES_COLLECTION, id);
-    await updateDoc(docRef, {
+    const cleanData = sanitizeForFirestore({
       ...serviceData,
       updatedAt: new Date().toISOString(),
     });
+    await updateDoc(docRef, cleanData);
   },
 
   async delete(id: string): Promise<void> {
@@ -72,16 +75,18 @@ export const ServicePlanService = {
 
   async updateSetlist(serviceId: string, setlist: SetlistItem[]): Promise<void> {
     const docRef = doc(db, SERVICES_COLLECTION, serviceId);
+    const cleanSetlist = sanitizeForFirestore(setlist);
     await updateDoc(docRef, {
-      setlist,
+      setlist: cleanSetlist,
       updatedAt: new Date().toISOString()
     });
   },
 
   async updateTeam(serviceId: string, team: ServiceMemberAssignment[]): Promise<void> {
     const docRef = doc(db, SERVICES_COLLECTION, serviceId);
+    const cleanTeam = sanitizeForFirestore(team);
     await updateDoc(docRef, {
-      team,
+      team: cleanTeam,
       updatedAt: new Date().toISOString()
     });
   },
@@ -100,8 +105,9 @@ export const ServicePlanService = {
       member.userId === userId ? { ...member, status } : member
     );
 
+    const cleanTeam = sanitizeForFirestore(updatedTeam);
     await updateDoc(docRef, {
-      team: updatedTeam,
+      team: cleanTeam,
       updatedAt: new Date().toISOString()
     });
   }
